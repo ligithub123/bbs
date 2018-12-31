@@ -31,7 +31,7 @@ public class Functions {
 	/**
 	 * 继续encode URL (url,传参tomcat会自动解码)
 	 * 要作为参数传递的话，需要再次encode
-	 * @param encodeUrl
+	 * @param url
 	 * @return String
 	 */
 	public String encodeUrl(String url) {

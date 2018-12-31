@@ -1,5 +1,5 @@
 @layout("/common/layout.html",{requiredEditor:true}){
-<form action="${ctxPath}/bbs/topic/save" method="post" id="post-form" onsubmit="return ajaxSubmit(this)">
+<form action="${ctxPath}/bbs/saveTopic" method="post" id="post-form" onsubmit="return ajaxSubmit(this)">
 	<fieldset>
 		<legend>发表主题</legend>
 		<div class="form-group">
@@ -12,7 +12,7 @@
 					</select>
 				</div>
 				<div class="col-sm-8">
-					<input type="text" class="form-control " name="title" placeholder="请输入主题标题">
+					<input type="text" class="form-control " name="title" placeholder="请输入主题标题" autocomplete="off">
 				</div>
 			</div>
 		</div>

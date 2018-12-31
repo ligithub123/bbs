@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ibeetl.bbs.mapper.BBSTopicMapper">
+
+    <update id="upStatusById" parameterType="int">
+      update `BBS_TOPIC` SET `is_up` = #{isUp} where `id` = #{id}
+    </update>
+
+    <update id="upNiceStatusById" parameterType="int">
+      update `BBS_TOPIC` SET `is_nice` = #{isNice} where `id` = #{id}
+    </update>
+
+</mapper>

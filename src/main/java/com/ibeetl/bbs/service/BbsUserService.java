@@ -31,8 +31,8 @@ public interface  BbsUserService {
 	public void addReplayScore(long userId);
 
 	/** 设置用户账号
-	 * @param userName
-	 * @param password
+	 * @param
+	 * @param
 	 */
 	public BbsUser setUserAccount(BbsUser user);
 	

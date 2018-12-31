@@ -1,6 +1,8 @@
 package com.ibeetl.bbs.controller;
 
 import com.alibaba.fastjson.JSONObject;
+import com.ibeetl.bbs.common.Const;
+import com.ibeetl.bbs.common.WebUtils;
 import com.ibeetl.bbs.model.BbsUser;
 import com.ibeetl.bbs.service.UserService;
 import com.ibeetl.bbs.util.HashKit;
@@ -13,6 +15,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * @author ljy
@@ -29,7 +34,8 @@ public class Login1Controller {
 
     @ResponseBody
     @RequestMapping(value = "/login")
-    public JSONObject login(@RequestParam("userName") String userName, @RequestParam("password") String password){
+    public JSONObject login(@RequestParam("userName") String userName, @RequestParam("password") String password,
+                            HttpServletResponse response, HttpServletRequest request){
 
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("err",1 );
@@ -56,10 +62,18 @@ public class Login1Controller {
             return jsonObject;
         }
 
-        //进入新界面
+        //用户登录信息保存到cookie
+        WebUtils.loginUser(request, response, bbsUser, true);
         jsonObject.put("msg", "/bbs/index/1.html");
         jsonObject.put("err", 0);
         return jsonObject;
     }
+
+    @RequestMapping(value = "/logout")
+    public void logout(HttpServletResponse response,HttpServletRequest request){
+
+        WebUtils.logoutUser(request , response);
+    }
+
 
 }
