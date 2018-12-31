@@ -147,4 +147,41 @@ public class BBSTopicServiceImpl implements BBSTopicService {
         logger.info("删除id为"+id+"的帖子");
     }
 
+    @Override
+    public BbsTopic selectTopicById(Integer id) {
+
+        BbsTopic bbsTopic = new BbsTopic();
+        bbsTopic.setId(id);
+        BbsTopic bbsTopic1 = bbsTopicMapper.selectOne(bbsTopic);
+        return bbsTopic1;
+    }
+
+    @Override
+    @Transactional
+    public void changPVcount(Integer id) {
+        BbsTopic bbsTopic = new BbsTopic();
+        bbsTopic.setId(id);
+        BbsTopic bbsTopic1 = bbsTopicMapper.selectOne(bbsTopic);
+
+        if(bbsTopic1 != null){
+            bbsTopic1.setPv(bbsTopic1.getPv()+1);
+            bbsTopicMapper.updateByPrimaryKey(bbsTopic1);
+            logger.info("修改id为"+id+"的帖子的浏览次数为"+bbsTopic1.getPv());
+        }
+    }
+
+    @Override
+    @Transactional
+    public void changePostCount(Integer topicId) {
+        BbsTopic bbsTopic = new BbsTopic();
+        bbsTopic.setId(topicId);
+        BbsTopic bbsTopic1 = bbsTopicMapper.selectOne(bbsTopic);
+
+        if(bbsTopic1 != null){
+            bbsTopic1.setPostCount(bbsTopic1.getPostCount());
+            bbsTopicMapper.updateByPrimaryKey(bbsTopic1);
+            logger.info("修改id为"+topicId+"的帖子的浏览次数为"+bbsTopic1.getPostCount());
+        }
+    }
+
 }

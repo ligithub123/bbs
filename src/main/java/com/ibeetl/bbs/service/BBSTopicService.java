@@ -27,4 +27,12 @@ public interface BBSTopicService {
     void changeIsNiceStatus(Integer id);
 
     void deleteTopic(Integer id);
+
+    BbsTopic selectTopicById(Integer id);
+
+    /** 修改帖子的浏览次数*/
+    void changPVcount(Integer id);
+
+    /** 修改帖子的评论次数*/
+    void changePostCount(Integer topicId);
 }

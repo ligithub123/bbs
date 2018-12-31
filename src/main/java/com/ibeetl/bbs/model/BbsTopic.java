@@ -23,9 +23,9 @@ public class BbsTopic  extends TailBean implements Serializable{
 	private Integer isNice ;
 	private Integer isUp ;
 	private Integer moduleId ;
-	private Integer postCount ;
-	private Integer pv ;
-	private Integer replyCount ;
+	private Integer postCount ;//回复数
+	private Integer pv ;//浏览数
+	private Integer replyCount ;//回复帖子的回复数
 	private Integer userId ;
 	private String content ;
 	private Date createTime ;

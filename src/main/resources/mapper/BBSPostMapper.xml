@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ibeetl.bbs.mapper.BBSPostMapper">
+    <select id="selectPostByTopicId" parameterType="int" resultType="com.ibeetl.bbs.model.BbsPost">
+        select * from `BBS_POST` where `topic_id` = #{topicId}
+    </select>
+
+</mapper>
