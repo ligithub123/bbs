@@ -13,6 +13,8 @@ import com.ibeetl.bbs.service.BBSReplyService;
 import com.ibeetl.bbs.service.BBSTopicService;
 import com.sun.imageio.plugins.common.I18N;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -33,6 +35,8 @@ import java.util.List;
 @Controller
 @RequestMapping(value = "/bbs")
 public class BBS1Controller {
+
+    private static final Logger logger = LoggerFactory.getLogger(BBS1Controller.class);
 
     @Autowired
     private BBSTopicService bbsTopicService;
@@ -268,6 +272,14 @@ public class BBS1Controller {
         return jsonObject;
     }
 
+    /**
+     * 保存评论
+     * @param topicId
+     * @param content
+     * @param request
+     * @param response
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "/post/save")
     public JSONObject savePost(@RequestParam("topicId") Integer topicId,
@@ -299,6 +311,171 @@ public class BBS1Controller {
             jsonObject.put("msg","bbs/topic/${"+topicId+"}-1.html" );
         } catch (Exception e) {
             jsonObject.put("msg", "评论保存出错，请联系管理员");
+            return jsonObject;
+        }
+
+        return jsonObject;
+    }
+
+    /**
+     * 保存回复
+     * @param topicId
+     * @param postId
+     * @param content
+     * @param request
+     * @param response
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/reply/save")
+    public JSONObject saveReply(@RequestParam("topicId") Integer topicId,
+                                @RequestParam("postId") Integer postId,
+                               @RequestParam("content") String content,
+                               HttpServletRequest request,HttpServletResponse response){
+
+        JSONObject jsonObject = new JSONObject();
+        BbsUser user = webUtils.currentUser(request, response);
+        if(user == null){
+            jsonObject.put("msg", "未登录用户！");
+            return jsonObject;
+        }
+
+        jsonObject.put("err",1 );
+        if(topicId == null){
+            jsonObject.put("msg", "系统错误，请联系管理员");
+            return jsonObject;
+        }
+
+        if(StringUtils.isEmpty(content)){
+            jsonObject.put("msg", "内容不能为空");
+            return jsonObject;
+        }
+
+        try {
+            bbsReplyService.saveReply(postId,topicId,content,user);
+            jsonObject.put("err", 0);
+            jsonObject.put("msg","bbs/topic/"+topicId+"-1.html" );
+        } catch (Exception e) {
+            jsonObject.put("msg", "评论的回复保存出错，请联系管理员");
+            return jsonObject;
+        }
+
+        return jsonObject;
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/post/edit/{id}.html")
+    public ModelAndView postEdit(@PathVariable("id") Integer id,
+                                HttpServletRequest request,HttpServletResponse response){
+
+        ModelAndView modelAndView = new ModelAndView();
+        BbsUser user = webUtils.currentUser(request, response);
+        modelAndView.addObject("err",1 );
+        if(user == null){
+            modelAndView.addObject("msg", "未登录用户！");
+            return modelAndView;
+        }
+
+        if(id == null){
+            modelAndView.addObject("msg", "系统错误，请联系管理员");
+            return modelAndView;
+        }
+
+        try {
+            modelAndView.setViewName("/postEdit.html");
+            BbsPost post = bbsPostService.getPostById(id);
+            if(post != null){
+                modelAndView.addObject("post", post);
+            }else {
+                logger.info("获取的评论对象为空");
+            }
+            BbsTopic bbsTopic = bbsTopicService.selectTopicById(post.getTopicId());
+            if(bbsTopic != null){
+                modelAndView.addObject("topic", bbsTopic);
+            }else {
+                logger.info("编辑评论时获取帖子对象为空");
+            }
+        } catch (Exception e) {
+            modelAndView.addObject("msg", "评论编辑出错，请联系管理员");
+        }
+
+        return modelAndView;
+    }
+
+    /**
+     * 帖子中评论内容进行更新
+     * @param id
+     * @param content
+     * @param request
+     * @param response
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/post/update")
+    public JSONObject postUpdate(@RequestParam("id") Integer id,
+                               @RequestParam("content") String content,
+                               HttpServletRequest request,HttpServletResponse response){
+
+        JSONObject jsonObject = new JSONObject();
+        BbsUser user = webUtils.currentUser(request, response);
+        if(user == null){
+            jsonObject.put("msg", "未登录用户！");
+            return jsonObject;
+        }
+
+        jsonObject.put("err",1 );
+        if(id == null){
+            jsonObject.put("msg", "系统错误，请联系管理员");
+            return jsonObject;
+        }
+
+        if(StringUtils.isEmpty(content)){
+            jsonObject.put("msg", "内容不能为空");
+            return jsonObject;
+        }
+
+        try {
+            bbsPostService.updatePost(id,content);
+            BbsPost post = bbsPostService.getPostById(id);
+            Integer topicId = post.getTopicId();
+            jsonObject.put("err", 0);
+            jsonObject.put("msg","/bbs/topic/"+topicId+"-1.html" );
+            jsonObject.put("id",post.getId() );
+        } catch (Exception e) {
+            jsonObject.put("msg", "评论更新出错，请联系管理员");
+            return jsonObject;
+        }
+
+        return jsonObject;
+    }
+
+
+    @ResponseBody
+    @RequestMapping(value = "//post/delete/{id}")
+    public JSONObject deletePost(@PathVariable("id") Integer id,
+                                 HttpServletRequest request,HttpServletResponse response){
+
+        JSONObject jsonObject = new JSONObject();
+        BbsUser user = webUtils.currentUser(request, response);
+        if(user == null){
+            jsonObject.put("msg", "未登录用户！");
+            return jsonObject;
+        }
+
+        jsonObject.put("err",1 );
+        if(id == null){
+            jsonObject.put("msg", "请选择需要删除的评论");
+            return jsonObject;
+        }
+
+        try {
+            bbsPostService.deletePostById(id);
+            BbsPost post = bbsPostService.getPostById(id);
+            Integer topicId = post.getTopicId();
+            jsonObject.put("err", 0);
+            jsonObject.put("msg","/bbs/topic/"+topicId+"-1.html" );
+        } catch (Exception e) {
+            jsonObject.put("msg", "评论删除出错，请联系管理员");
             return jsonObject;
         }
 

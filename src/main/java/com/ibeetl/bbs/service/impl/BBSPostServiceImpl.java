@@ -4,8 +4,6 @@ import com.ibeetl.bbs.mapper.BBSPostMapper;
 import com.ibeetl.bbs.model.BbsPost;
 import com.ibeetl.bbs.model.BbsUser;
 import com.ibeetl.bbs.service.BBSPostService;
-import com.ibeetl.bbs.service.BBSService;
-import com.ibeetl.bbs.service.BBSTopicService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -64,6 +62,26 @@ public class BBSPostServiceImpl implements BBSPostService {
         bbsPost.setContent(content);
         bbsPost.setHasReply(0);
         bbsPostMapper.insert(bbsPost);
+    }
+
+    @Override
+    @Transactional
+    public void updatePost(Integer postId, String content) {
+
+        BbsPost bbsPost1 = new BbsPost();
+        bbsPost1.setId(postId);
+        BbsPost bbsPost = bbsPostMapper.selectOne(bbsPost1);
+        bbsPost.setContent(content);
+        bbsPost.setUpdateTime(new Date());
+
+        bbsPostMapper.updateContentById(content,new Date(),postId);
+    }
+
+    @Override
+    @Transactional
+    public void deletePostById(Integer id) {
+
+        bbsPostMapper.deleteByPrimaryKey(id);
     }
 
 }

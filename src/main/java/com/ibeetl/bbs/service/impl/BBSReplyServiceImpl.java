@@ -3,11 +3,14 @@ package com.ibeetl.bbs.service.impl;
 import com.ibeetl.bbs.mapper.BBSReplyMapper;
 import com.ibeetl.bbs.model.BbsReply;
 import com.ibeetl.bbs.model.BbsTopic;
+import com.ibeetl.bbs.model.BbsUser;
 import com.ibeetl.bbs.service.BBSReplyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -30,5 +33,19 @@ public class BBSReplyServiceImpl implements BBSReplyService {
         criteria.andEqualTo("postId", id);
         List<BbsReply> bbsReplys = bbsReplyMapper.selectByExample(example);
         return  bbsReplys;
+    }
+
+    @Override
+    @Transactional
+    public void saveReply(Integer postId, Integer topicId, String content, BbsUser user) {
+
+        BbsReply bbsReply = new BbsReply();
+        bbsReply.setCreateTime(new Date());
+        bbsReply.setPostId(postId);
+        bbsReply.setUserId(user.getId());
+        bbsReply.setTopicId(topicId);
+        bbsReply.setContent(content);
+
+        bbsReplyMapper.insert(bbsReply);
     }
 }

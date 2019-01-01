@@ -17,4 +17,8 @@ public interface BBSPostService {
     void saveSupport(BbsPost bbsPost);
 
     void savePost(Integer topicId, String content, BbsUser user);
+
+    void updatePost(Integer postId, String content);
+
+    void deletePostById(Integer id);
 }

@@ -3,8 +3,10 @@ package com.ibeetl.bbs.service.impl;
 
 import com.ibeetl.bbs.bean.BBSTopic;
 import com.ibeetl.bbs.mapper.BBSPostMapper;
+import com.ibeetl.bbs.mapper.BBSReplyMapper;
 import com.ibeetl.bbs.mapper.BBSTopicMapper;
 import com.ibeetl.bbs.model.BbsPost;
+import com.ibeetl.bbs.model.BbsReply;
 import com.ibeetl.bbs.model.BbsTopic;
 import com.ibeetl.bbs.model.BbsUser;
 import com.ibeetl.bbs.service.BBSTopicService;
@@ -33,6 +35,9 @@ public class BBSTopicServiceImpl implements BBSTopicService {
 
     @Autowired
     private BBSPostMapper bbsPostMapper;
+
+    @Autowired
+    private BBSReplyMapper bbsReplyMapper;
 
     @Override
     public List<BbsTopic> findAll() {
@@ -144,6 +149,10 @@ public class BBSTopicServiceImpl implements BBSTopicService {
         BbsPost bbsPost = new BbsPost();
         bbsPost.setTopicId(id);
         bbsPostMapper.delete(bbsPost);
+
+        BbsReply bbsReply = new BbsReply();
+        bbsReply.setTopicId(id);
+        bbsReplyMapper.delete(bbsReply);
         logger.info("删除id为"+id+"的帖子");
     }
 
@@ -178,9 +187,9 @@ public class BBSTopicServiceImpl implements BBSTopicService {
         BbsTopic bbsTopic1 = bbsTopicMapper.selectOne(bbsTopic);
 
         if(bbsTopic1 != null){
-            bbsTopic1.setPostCount(bbsTopic1.getPostCount());
+            bbsTopic1.setPostCount(bbsTopic1.getPostCount()+1);
             bbsTopicMapper.updateByPrimaryKey(bbsTopic1);
-            logger.info("修改id为"+topicId+"的帖子的浏览次数为"+bbsTopic1.getPostCount());
+            logger.info("修改id为"+topicId+"的帖子的评论次数为"+bbsTopic1.getPostCount());
         }
     }
 

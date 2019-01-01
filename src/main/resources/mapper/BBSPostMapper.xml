@@ -5,5 +5,9 @@
     <select id="selectPostByTopicId" parameterType="int" resultType="com.ibeetl.bbs.model.BbsPost">
         select * from `BBS_POST` where `topic_id` = #{topicId}
     </select>
+    
+    <update id="updateContentById">
+        update `BBS_POST` SET `content` = #{content},`update_time`=#{date} where `id`= #{postId}
+    </update>
 
 </mapper>
