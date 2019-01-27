@@ -1,6 +1,7 @@
 package com.ibeetl.bbs.service.impl;
 
 import com.ibeetl.bbs.mapper.BBSReplyMapper;
+import com.ibeetl.bbs.mapper.UserMapper;
 import com.ibeetl.bbs.model.BbsReply;
 import com.ibeetl.bbs.model.BbsTopic;
 import com.ibeetl.bbs.model.BbsUser;
@@ -23,8 +24,11 @@ public class BBSReplyServiceImpl implements BBSReplyService {
     @Autowired
     private BBSReplyMapper bbsReplyMapper;
 
+    @Autowired
+    private UserMapper userMapper;
+
     @Override
-    public List<BbsReply> seletPostReply(Integer id, Integer topicId) {
+    public List<BbsReply> seletPostReply(Integer topicId, Integer id) {
 
         Example example = new Example(BbsReply.class);
         example.setOrderByClause("CREATE_TIME ASC");
@@ -32,6 +36,14 @@ public class BBSReplyServiceImpl implements BBSReplyService {
         criteria.andEqualTo("topicId",topicId );
         criteria.andEqualTo("postId", id);
         List<BbsReply> bbsReplys = bbsReplyMapper.selectByExample(example);
+        for (BbsReply bbsReply : bbsReplys) {
+
+            BbsUser bbsUser = new BbsUser();
+            bbsUser.setId(bbsReply.getUserId());
+            BbsUser bbsUser1 =userMapper.selectOne(bbsUser);
+            bbsReply.setUserId(bbsUser1.getId());
+            bbsReply.setUser(bbsUser1);
+        }
         return  bbsReplys;
     }
 

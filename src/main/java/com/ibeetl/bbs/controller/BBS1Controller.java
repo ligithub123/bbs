@@ -199,7 +199,7 @@ public class BBS1Controller {
      * @param id 帖子的id
      * @return
      */
-    @RequestMapping(value = "/topic/{id}-1.html")
+    @RequestMapping(value = "/topic/{id}-1.html",headers = {})
     @ResponseBody
     public ModelAndView topicDetail(@PathVariable("id") Integer id){
 
@@ -214,7 +214,7 @@ public class BBS1Controller {
         modelAndView.addObject("topic", bbsTopic);
         List<BbsPost> bbsPosts = bbsPostService.selectPostsByTopicId(id);
         for (BbsPost bbsPost : bbsPosts) {
-            List<BbsReply> bbsReplies = bbsReplyService.seletPostReply(id,bbsPost.getTopicId());
+            List<BbsReply> bbsReplies = bbsReplyService.seletPostReply(id,bbsPost.getId());
 
             if(bbsReplies != null && !bbsReplies.isEmpty()){
                 bbsPost.setReplys(bbsReplies);
