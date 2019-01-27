@@ -90,6 +90,7 @@ public class BBSTopicServiceImpl implements BBSTopicService {
         criteria.andEqualTo("isUp",1 );
         List<BbsTopic> bbsTopics = bbsTopicMapper.selectByExample(example);
 
+
         Example example1 = new Example(BbsTopic.class);
         example1.setOrderByClause("CREATE_TIME DESC");
         Example.Criteria criteria1 = example1.createCriteria();

@@ -21,4 +21,10 @@ public interface BBSPostService {
     void updatePost(Integer postId, String content);
 
     void deletePostById(Integer id);
+
+    /** 已有评论是否有其他评论*/
+    void changeHasReplyStatus(Integer postId, Integer topicId);
+
+    /**按点赞数获取排列前5的 */
+    List<BbsPost> selectPostByIdLimit5(Integer id);
 }

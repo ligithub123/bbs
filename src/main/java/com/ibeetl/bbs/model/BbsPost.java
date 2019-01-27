@@ -19,6 +19,9 @@ public class BbsPost  extends TailBean implements Serializable{
 	private String content ;
 	private Date createTime ;
 	private Date updateTime ;
+
+
+	private BbsUser user;//后添加
 	
 	private Integer pros = 0;//顶次数
 	private Integer cons = 0;//踩次数
@@ -115,6 +118,14 @@ public class BbsPost  extends TailBean implements Serializable{
 
 	public void setIsAccept(Integer isAccept) {
 		this.isAccept = isAccept;
+	}
+
+	public BbsUser getUser() {
+		return user;
+	}
+
+	public void setUser(BbsUser user) {
+		this.user = user;
 	}
 
 	

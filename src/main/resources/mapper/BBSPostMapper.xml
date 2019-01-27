@@ -10,4 +10,15 @@
         update `BBS_POST` SET `content` = #{content},`update_time`=#{date} where `id`= #{postId}
     </update>
 
+    <update id="updateHasReplyStatus">
+        update `BBS_POST` SET `has_reply` = 1 where `id` = #{postId} and `topic_id` = #{topicId}
+    </update>
+
+    <!--<select id="selectPostByIdLimit5" parameterType="int" resultMap="">-->
+      <!--select * from `BBS_POST`-->
+      <!--where `id` = #{id}-->
+      <!--order by pros desc ,create_time-->
+      <!--limit-->
+    <!--</select>-->
+
 </mapper>

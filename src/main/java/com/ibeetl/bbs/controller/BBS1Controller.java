@@ -26,6 +26,7 @@ import tk.mybatis.mapper.entity.Example;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -204,6 +205,7 @@ public class BBS1Controller {
     public ModelAndView topicDetail(@PathVariable("id") Integer id){
 
         ModelAndView modelAndView = new ModelAndView();
+        List<BbsPost> upPosts = new ArrayList<>();
         if(id == null){
             modelAndView.addObject("err",1 );
             modelAndView.addObject("msg","请选择要查看的帖子" );
@@ -212,6 +214,24 @@ public class BBS1Controller {
         modelAndView.setViewName("/detail.html");
         BbsTopic bbsTopic = bbsTopicService.selectTopicById(id);
         modelAndView.addObject("topic", bbsTopic);
+
+        if(bbsTopic.getPostCount() > 10){
+            //如果多于10条评论，前面5条是按点赞的排序显示，后面的按照时间倒叙排列
+            upPosts = bbsPostService.selectPostByIdLimit5(id);
+        }
+
+        List<BbsPost> bbsPosts = getPosts(id);
+
+        modelAndView.addObject("upPosts",upPosts );
+        modelAndView.addObject("postPage",bbsPosts );
+        //修改帖子的浏览次数
+        bbsTopicService.changPVcount(id);
+        modelAndView.addObject("err",0 );
+        return modelAndView;
+    }
+
+    /** 获取评论*/
+    private List<BbsPost> getPosts(Integer id) {
         List<BbsPost> bbsPosts = bbsPostService.selectPostsByTopicId(id);
         for (BbsPost bbsPost : bbsPosts) {
             List<BbsReply> bbsReplies = bbsReplyService.seletPostReply(id,bbsPost.getId());
@@ -220,11 +240,7 @@ public class BBS1Controller {
                 bbsPost.setReplys(bbsReplies);
             }
         }
-        modelAndView.addObject("postPage",bbsPosts );
-        //修改帖子的浏览次数
-        bbsTopicService.changPVcount(id);
-        modelAndView.addObject("err",0 );
-        return modelAndView;
+        return bbsPosts;
     }
 
     /**
@@ -318,7 +334,7 @@ public class BBS1Controller {
     }
 
     /**
-     * 保存回复
+     * 保存评论的评论
      * @param topicId
      * @param postId
      * @param content
@@ -353,6 +369,9 @@ public class BBS1Controller {
 
         try {
             bbsReplyService.saveReply(postId,topicId,content,user);
+            //修改post为有回复的状态
+            bbsPostService.changeHasReplyStatus(postId,topicId);
+
             jsonObject.put("err", 0);
             jsonObject.put("msg","bbs/topic/"+topicId+"-1.html" );
         } catch (Exception e) {
